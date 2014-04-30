@@ -56,7 +56,9 @@ namespace EKG
                     dane[dane.Length-1]="0";
                 ekgdata = dane.AsParallel().Select(x => int.Parse(x, NumberStyles.Integer)).ToArray();
                 //System.Threading.Tasks.Task.Delay(TimeSpan.FromMilliseconds(50));
-                ploting(normalizedata(ekgdata), (int)plot.ActualWidth);
+                ekgdata = ECGoperation.Smoothing(ekgdata);
+                var mark = ECGoperation.Direction(ekgdata);
+                ploting(normalizedata(ekgdata), (int)plot.ActualWidth,mark);
                 moove.IsEnabled = true;
                 moove.Value = 0;
                 
@@ -76,32 +78,71 @@ namespace EKG
             
             return data;
         }
-        private void  ploting(int[] data ,int max){
+        private void  ploting(int[] data ,int max,int[] maska=null){
             
             Polyline myPolygon = new Polyline();
-            myPolygon.Stroke = new SolidColorBrush(Colors.Black); 
-            
-            myPolygon.StrokeThickness = 3;
+            myPolygon.Stroke = new SolidColorBrush(Colors.Black);
+
+            //myPolygon.Opacity = 0.5;
+            myPolygon.StrokeThickness = 2;
             myPolygon.HorizontalAlignment = HorizontalAlignment.Left;
             myPolygon.VerticalAlignment = VerticalAlignment.Center;
+            //************************************************************//
+            
+            
 
             PointCollection points = new PointCollection();
-            for (int i = (max-(int)plot.ActualWidth),j=0; i < max; i++,j++)
-            {
+            
+           
+                for (int i = (max - (int)plot.ActualWidth), j = 0; i < max; i++, j++)
+                {
+                    draw(maska, j, i);
+                    points.Add(new Point(j, plot.ActualHeight - ekgdata[i]));
 
-                points.Add(new Point(j, plot.ActualHeight - ekgdata[i]));
-            }
-                
+                    //draw(maska, j,i );
+                    
+                }
             
-            
+
             myPolygon.Points = points;
-            plot.Children.Add(myPolygon);
-        }
 
-        private void plot1_Click(object sender, RoutedEventArgs e)
-        {
-            ploting(normalizedata(ekgdata),(int)plot.ActualWidth);
+            plot.Children.Add(myPolygon);
+            
+            
         }
+        private void draw(int[] maska ,int i, int j)
+        {
+            if(maska[i]==1){
+
+                
+                Line myLine = new Line();
+                myLine.Stroke = new SolidColorBrush(Colors.Aqua);
+                myLine.StrokeThickness = 4;
+                myLine.X1 = j + 1;
+                myLine.X2 = j + 1;
+                myLine.Y1 = plot.ActualHeight - ekgdata[i];
+                myLine.Y2 = plot.ActualHeight - ekgdata[i] + 1;
+
+                plot.Children.Add(myLine);
+            }
+            else if (maska[i] == 0)
+            {
+                
+                Line myLine = new Line();
+                myLine.Stroke = new SolidColorBrush(Colors.Black);
+                myLine.StrokeThickness = 4;
+                myLine.X1 = j + 1;
+                myLine.X2 = j + 1;
+                myLine.Y1 = plot.ActualHeight - ekgdata[i];
+                myLine.Y2 = plot.ActualHeight - ekgdata[i] + 1;
+
+                plot.Children.Add(myLine);
+
+            }
+
+
+        }
+        
 
         private void moove_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -111,10 +152,11 @@ namespace EKG
 
         private void moove_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            var mark = ECGoperation.Direction(ekgdata);
             int pozycja =(int) (moove.Value * ekgdata.Length / 10000);
             if (pozycja < (int)plot.ActualWidth) pozycja = (int)plot.ActualWidth;
             plot.Children.Clear();
-            ploting(ekgdata, pozycja);
+            ploting(ekgdata, pozycja,mark);
         }
 
         
