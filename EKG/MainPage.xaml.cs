@@ -96,7 +96,7 @@ namespace EKG
            
                 for (int i = (max - (int)plot.ActualWidth), j = 0; i < max; i++, j++)
                 {
-                    draw(maska, j, i);
+                    draw(maska, j, (int)plot.ActualHeight - ekgdata[i]);
                     points.Add(new Point(j, plot.ActualHeight - ekgdata[i]));
 
                     //draw(maska, j,i );
@@ -110,9 +110,9 @@ namespace EKG
             
             
         }
-        private void draw(int[] maska ,int i, int j)
+        private void draw(int[] maska ,int j, int i)
         {
-            if(maska[i]==1){
+            if(maska[j]==1){
 
                 
                 Line myLine = new Line();
@@ -120,21 +120,21 @@ namespace EKG
                 myLine.StrokeThickness = 4;
                 myLine.X1 = j + 1;
                 myLine.X2 = j + 1;
-                myLine.Y1 = plot.ActualHeight - ekgdata[i];
-                myLine.Y2 = plot.ActualHeight - ekgdata[i] + 1;
+                myLine.Y1 = i;// plot.ActualHeight - ekgdata[i];
+                myLine.Y2 = i + 1;//plot.ActualHeight - ekgdata[i] + 1;
 
                 plot.Children.Add(myLine);
             }
-            else if (maska[i] == 0)
+            else if (maska[j] == 0)
             {
                 
                 Line myLine = new Line();
                 myLine.Stroke = new SolidColorBrush(Colors.Black);
                 myLine.StrokeThickness = 4;
-                myLine.X1 = j + 1;
-                myLine.X2 = j + 1;
-                myLine.Y1 = plot.ActualHeight - ekgdata[i];
-                myLine.Y2 = plot.ActualHeight - ekgdata[i] + 1;
+                myLine.X1 = i;//j + 1;
+                myLine.X2 = i;// j + 1;
+                myLine.Y1 = j+1;// ; plot.ActualHeight - ekgdata[i];
+                myLine.Y2 = j + 1;// plot.ActualHeight - ekgdata[i] + 1;
 
                 plot.Children.Add(myLine);
 
