@@ -34,10 +34,12 @@
     		<RowDefinition Height="0.2*"/>
     	</Grid.RowDefinitions>
     	<Viewbox x:Name="title">
-    		<Button x:Name="ecgbutton" Content="ECG" Click="plot1_Click" BorderBrush="Black" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Stretch" FontSize="26.667"/>
+    		<TextBlock x:Name="titleecg" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="Wrap">
+    			<Run Foreground="Black" Text="ECG"/>
+    		</TextBlock>
     	</Viewbox>
-    	<Canvas x:Name="plot" Background="Black" Margin="0,0,0,154" Grid.RowSpan="2" Grid.Row="1" />
-    	<Slider x:Name="moove" Grid.Row="2" VerticalAlignment="Center" Background="Black" Foreground="#FFF30707" IsEnabledChanged="moove_IsEnabledChanged" BorderBrush="#FFF30707" ValueChanged="moove_ValueChanged"/>
+    	<Canvas x:Name="plot" Margin="0,0,0,154" Grid.RowSpan="2" Grid.Row="1" />
+    	<Slider x:Name="moove" Grid.Row="2" VerticalAlignment="Center" Background="Black" Foreground="Black" IsEnabledChanged="moove_IsEnabledChanged" BorderBrush="#FFF30707" ValueChanged="moove_ValueChanged" Maximum="10000"/>
 
     </Grid>
 </Page>

@@ -30,10 +30,10 @@ namespace EKG
         public MainPage()
         {
             this.InitializeComponent();
-            a =(int) plot.ActualHeight;
+            moove.IsEnabled = false;
         }
         int[] ekgdata;
-        int a;
+        
         private async void open_Click(object sender, RoutedEventArgs e)
         {
             FileOpenPicker FOP = new FileOpenPicker();
@@ -57,6 +57,8 @@ namespace EKG
                 ekgdata = dane.AsParallel().Select(x => int.Parse(x, NumberStyles.Integer)).ToArray();
                 //System.Threading.Tasks.Task.Delay(TimeSpan.FromMilliseconds(50));
                 ploting(normalizedata(ekgdata), (int)plot.ActualWidth);
+                moove.IsEnabled = true;
+                moove.Value = 0;
                 
 
             }
@@ -75,10 +77,11 @@ namespace EKG
             return data;
         }
         private void  ploting(int[] data ,int max){
-            Polyline myPolygon = new Polyline();
-            myPolygon.Stroke = new SolidColorBrush(Colors.Red); 
             
-            myPolygon.StrokeThickness = 1;
+            Polyline myPolygon = new Polyline();
+            myPolygon.Stroke = new SolidColorBrush(Colors.Black); 
+            
+            myPolygon.StrokeThickness = 3;
             myPolygon.HorizontalAlignment = HorizontalAlignment.Left;
             myPolygon.VerticalAlignment = VerticalAlignment.Center;
 
@@ -108,7 +111,7 @@ namespace EKG
 
         private void moove_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            int pozycja =(int) (moove.Value * ekgdata.Length / 100);
+            int pozycja =(int) (moove.Value * ekgdata.Length / 10000);
             if (pozycja < (int)plot.ActualWidth) pozycja = (int)plot.ActualWidth;
             plot.Children.Clear();
             ploting(ekgdata, pozycja);
