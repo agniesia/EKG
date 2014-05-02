@@ -1,4 +1,4 @@
-﻿<Page
+﻿<Page x:Name="apptop"
     x:Class="EKG.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,14 +6,35 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+	<Page.Resources>
+		<Flyout x:Name="operatiofly1" x:Key="operacje" Placement="Full">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Button x:Name="smoothbutton1" Content="Smooth ECG" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" Click="smoothbutton_Click"/>
+				<Button x:Name="direction1" Content="Show directions" HorizontalAlignment="Stretch" Margin="0" Grid.Row="1" VerticalAlignment="Stretch"/>
+				<Button x:Name="small_interwals1" Content="Show interwal to merge" HorizontalAlignment="Stretch" Margin="0" Grid.Row="2" VerticalAlignment="Stretch"/>
+				<Button x:Name="after_merge1" Content="Show after merge" HorizontalAlignment="Stretch" Margin="0" Grid.Row="3" VerticalAlignment="Stretch"/>
+				<Button Content="Show constant intervals" HorizontalAlignment="Stretch" Margin="0" Grid.Row="4" VerticalAlignment="Stretch"/>
+			</Grid>
+		</Flyout>
+	</Page.Resources>
 	<Page.TopAppBar>
-		<AppBar>
+		<AppBar x:Name="app">
 			<Grid x:Name="appgrig">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition/>
 					<ColumnDefinition/>
+					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
 				<Button x:Name="open" Content="OPEN" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0" BorderBrush="#FFFF0101" Foreground="#FFFF0101" Height="200" FontSize="64" Background="Black" Click="open_Click"/>
+				<Button x:Name="operations" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" BorderBrush="#FFEF0B0B" Foreground="#FFEF0B0B" FontSize="64" Click="operations_Click" Flyout="{StaticResource operacje}" Content="OPERATIONS"/>
+				<Button x:Name="close" Content="CLOSE" Grid.Column="2" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" FontSize="64" BorderBrush="#FFEF0B0B" Foreground="#FFEF0B0B" Click="close_Click"/>
 			</Grid>
 		</AppBar>
 	</Page.TopAppBar>
@@ -38,8 +59,51 @@
     			<Run Foreground="Black" Text="ECG"/>
     		</TextBlock>
     	</Viewbox>
-    	<Canvas x:Name="plot" Margin="0,0,0,154" Grid.RowSpan="2" Grid.Row="1" />
-    	<Slider x:Name="moove" Grid.Row="2" VerticalAlignment="Center" Background="Black" Foreground="Black" IsEnabledChanged="moove_IsEnabledChanged" BorderBrush="#FFF30707" ValueChanged="moove_ValueChanged" Maximum="10000"/>
+    	<Canvas x:Name="plot" Margin="0,0,0,154" Grid.RowSpan="2" Grid.Row="1" Background="Beige" >
+    		<Canvas.Resources>
+    			<Flyout x:Name="operatiofly" x:Key="FlyoutBase1" Placement="Full"  >
+    				<Grid>
+    					<Grid.RowDefinitions>
+    						<RowDefinition/>
+    						<RowDefinition/>
+    						<RowDefinition/>
+    						<RowDefinition/>
+    						<RowDefinition/>
+    					</Grid.RowDefinitions>
+    					<Button x:Name="smoothbutton" Content="Smooth ECG" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" />
+    					<Button x:Name="direction" Content="Show directions" HorizontalAlignment="Stretch" Margin="0" Grid.Row="1" VerticalAlignment="Stretch"/>
+    					<Button x:Name="small_interwals" Content="Show interwal to merge" HorizontalAlignment="Stretch" Margin="0" Grid.Row="2" VerticalAlignment="Stretch"/>
+    					<Button x:Name="after_merge" Content="Show after merge" HorizontalAlignment="Stretch" Margin="0" Grid.Row="3" VerticalAlignment="Stretch" />
+    					<Button Content="Show constant intervals" HorizontalAlignment="Stretch" Margin="0" Grid.Row="4" VerticalAlignment="Stretch" />
+    				</Grid>
+    			</Flyout>
+    		</Canvas.Resources>
+    		<FlyoutBase.AttachedFlyout>
+    			<StaticResource ResourceKey="operacje"/>
+    		</FlyoutBase.AttachedFlyout>
+    	</Canvas>
+    	<Grid Grid.Row="2">
+    		<Grid.ColumnDefinitions>
+    			<ColumnDefinition/>
+    			<ColumnDefinition/>
+    			<ColumnDefinition/>
+    		</Grid.ColumnDefinitions>
+    		<Grid.RowDefinitions>
+    			<RowDefinition Height="0.5*"/>
+    			<RowDefinition Height="0.5*"/>
+    		</Grid.RowDefinitions>
+    		<Slider x:Name="moove" VerticalAlignment="Center" Background="Black" Foreground="Black" IsEnabledChanged="moove_IsEnabledChanged" BorderBrush="#FFF30707" ValueChanged="moove_ValueChanged" Maximum="10000" Margin="0" Grid.ColumnSpan="3"/>
+    		<AppBarButton x:Name="pley" HorizontalAlignment="Center" Label="" VerticalAlignment="Top" Grid.Row="1" Icon="Play" Margin="0" Click="pley_Click"/>
+    		<AppBarButton x:Name="pause" Grid.Column="1" HorizontalAlignment="Center" Label="AppBarButton" Margin="0" Grid.Row="1" VerticalAlignment="Center" Icon="Stop" Click="pause_Click"/>
+    		<Grid x:Name="gridspeed" Grid.RowSpan="2" Grid.Row="2" Grid.Column="3" Margin="0,0,0,20">
+    			<Grid.RowDefinitions>
+    				<RowDefinition/>
+    				<RowDefinition/>
+    			</Grid.RowDefinitions>
+    			<TextBlock x:Name="speedname" HorizontalAlignment="Center" Margin="0" TextWrapping="Wrap" Text="Speed" VerticalAlignment="Center" FontSize="26.667" Foreground="Black" FontWeight="Bold"/>
+    			<Slider x:Name="speddslider" Margin="0" Grid.Row="1" Background="Black" BorderBrush="#FFFE0001" Foreground="#FF850001"/>
+    		</Grid>
+    	</Grid>
 
     </Grid>
 </Page>

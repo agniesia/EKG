@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using System.Threading;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -33,6 +34,7 @@ namespace EKG
             moove.IsEnabled = false;
         }
         int[] ekgdata;
+        int[] mark;
         
         private async void open_Click(object sender, RoutedEventArgs e)
         {
@@ -57,8 +59,9 @@ namespace EKG
                 ekgdata = dane.AsParallel().Select(x => int.Parse(x, NumberStyles.Integer)).ToArray();
                 //System.Threading.Tasks.Task.Delay(TimeSpan.FromMilliseconds(50));
                 ekgdata = ECGoperation.Smoothing(ekgdata);
-                var mark = ECGoperation.Direction(ekgdata);
-                ploting(normalizedata(ekgdata), (int)plot.ActualWidth,mark);
+                mark=ECGoperation.points(ekgdata);
+                ploting(normalizedata(ekgdata),(int)plot.ActualWidth,mark);
+                
                 moove.IsEnabled = true;
                 moove.Value = 0;
                 
@@ -96,8 +99,9 @@ namespace EKG
            
                 for (int i = (max - (int)plot.ActualWidth), j = 0; i < max; i++, j++)
                 {
-                    draw(maska, j, (int)plot.ActualHeight - ekgdata[i]);
+                    draw(maska, i, j);
                     points.Add(new Point(j, plot.ActualHeight - ekgdata[i]));
+                    //draw(maska, j, i);
 
                     //draw(maska, j,i );
                     
@@ -110,33 +114,33 @@ namespace EKG
             
             
         }
-        private void draw(int[] maska ,int j, int i)
+        private void draw(int[] maska ,int i, int j)
         {
-            if(maska[j]==1){
+            if(maska[i]==1){
 
                 
                 Line myLine = new Line();
                 myLine.Stroke = new SolidColorBrush(Colors.Aqua);
-                myLine.StrokeThickness = 4;
-                myLine.X1 = j + 1;
-                myLine.X2 = j + 1;
-                myLine.Y1 = i;// plot.ActualHeight - ekgdata[i];
-                myLine.Y2 = i + 1;//plot.ActualHeight - ekgdata[i] + 1;
+                myLine.StrokeThickness = 50;
+                myLine.X1 = j ;
+                myLine.X2 = j ;
+                myLine.Y1 = plot.ActualHeight - ekgdata[i];
+                myLine.Y2 = plot.ActualHeight - ekgdata[i] + 1;
 
                 plot.Children.Add(myLine);
             }
-            else if (maska[j] == 0)
+            else if (maska[i] == 0)
             {
-                
-                Line myLine = new Line();
-                myLine.Stroke = new SolidColorBrush(Colors.Black);
-                myLine.StrokeThickness = 4;
-                myLine.X1 = i;//j + 1;
-                myLine.X2 = i;// j + 1;
-                myLine.Y1 = j+1;// ; plot.ActualHeight - ekgdata[i];
-                myLine.Y2 = j + 1;// plot.ActualHeight - ekgdata[i] + 1;
 
-                plot.Children.Add(myLine);
+                //Line myLine = new Line();
+                //myLine.Stroke = new SolidColorBrush(Colors.Brown);
+                //myLine.StrokeThickness = 50;
+                //myLine.X1 = j;//j + 1;
+                //myLine.X2 = j;// j + 1;
+                //myLine.Y1 = plot.ActualHeight - ekgdata[i];
+                //myLine.Y2 = plot.ActualHeight - ekgdata[i] + 1;
+
+                //plot.Children.Add(myLine);
 
             }
 
@@ -152,14 +156,91 @@ namespace EKG
 
         private void moove_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            var mark = ECGoperation.Direction(ekgdata);
+            
             int pozycja =(int) (moove.Value * ekgdata.Length / 10000);
             if (pozycja < (int)plot.ActualWidth) pozycja = (int)plot.ActualWidth;
             plot.Children.Clear();
             ploting(ekgdata, pozycja,mark);
         }
 
+
+        private async void speedy_show(int n)
+        {
+            
+            for (int i = 0; i < moove.Maximum; i+=10)
+            {
+                
+                int pozycja = (int)(i * ekgdata.Length / 10000);
+                if (pozycja < (int)plot.ActualWidth) pozycja = (int)plot.ActualWidth;
+                plot.Children.Clear();
+                if (shouldStop == true)
+                {
+                    ploting(ekgdata, pozycja, mark);
+                    break;
+                }
+                ploting(ekgdata, pozycja, mark);
+                await System.Threading.Tasks.Task.Delay(TimeSpan.FromMilliseconds(n));
+                
+            }
+            
+        }
+        private volatile bool shouldStop = false;
         
+        private void pley_Click(object sender, RoutedEventArgs e)
+        {
+            int n = (int)(10 * speddslider.Value);
+
+            speedy_show(n);
+            
+            
+        }
+
+        private void pause_Click(object sender, RoutedEventArgs e)
+        {
+            
+            shouldStop = true;
+        }
+
+        private void operations_Click(object sender, RoutedEventArgs e)
+        {
+           
+        }
+
+        private void close_Click(object sender, RoutedEventArgs e)
+        {
+            operatiofly1.Hide();
+        }
+
+        private void smoothbutton_Click(object sender, RoutedEventArgs e)
+        {
+            operatiofly1.Hide();
+            operatiofly.Hide();
+            app.IsOpen = false;
+        }
+
+        private void direction_Click(object sender, RoutedEventArgs e)
+        {
+            operatiofly1.Hide();
+        }
+
+        private void small_interwals_Click(object sender, RoutedEventArgs e)
+        {
+            operatiofly1.Hide();
+        }
+
+        private void after_merge_Click(object sender, RoutedEventArgs e)
+        {
+            operatiofly1.Hide();
+            app.IsOpen = false;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            operatiofly1.Hide();
+        }
+
+       
+
         
     }
     
