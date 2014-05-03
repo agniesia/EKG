@@ -96,7 +96,7 @@ namespace EKG
             List<int> cordinates = coordination(direction);
             List<Tuple<int, int>> scaling = new List<Tuple<int, int>>();
             // zmiennosc obszaru
-            int ECGdiference = 20;// (int)(0.01 * (dateECG.Max() - dateECG.Min()));
+            int ECGdiference =(int)(0.01 * (dateECG.Max() - dateECG.Min()));
             // dlugosc obszaru
             int min_long=(int)(15);
 
@@ -140,9 +140,9 @@ namespace EKG
             var coordinates = coordination(directions);
             List<Tuple<int, int>> toscale= MarkToSacaling(dateECG, directions);
             //var coordinates=coordination(directions);
-            
+            var tofill = 0;
             if(toscale.First().Item1==0){
-                 var tofill=directions[toscale.ElementAt(1).Item1];
+                 tofill=directions[toscale.ElementAt(1).Item1];
                 for (int k = 0; k < toscale.First().Item2; k++)
                     directions[k] =tofill ;
                 toscale.RemoveAt(0);
@@ -150,16 +150,15 @@ namespace EKG
             var s = toscale.Last().Item2;
             if (toscale.Last().Item2 == (dateECG.Length-1))
             {
-                var tofill = directions[toscale.ElementAt(toscale.Count-2).Item1];
+                tofill = directions[toscale.ElementAt(toscale.Count-2).Item1];
                 for (int k = toscale.Last().Item1; k < toscale.Last().Item2; k++)
                     directions[k] = tofill;
                 toscale.RemoveAt(toscale.Count - 1);
             }
 
             var toscaling = toscale.ToList();
-            var t = 1;
-            while (t > 0)
-            {
+            
+            
                 for (int i = toscaling.Count - 1; i > 0; i--)
                 {
 
@@ -168,7 +167,7 @@ namespace EKG
                     {
                         //check what direction have to fill 
                         
-                        var tofill = directions[toscaling.ElementAt(i).Item1-1];
+                        tofill = directions[toscaling.ElementAt(i).Item1-1];
                         //fill small elelement
                         for (int k = toscaling.ElementAt(i).Item1; k < toscaling.ElementAt(i).Item2; k++)
                             directions[k] = tofill;
@@ -178,9 +177,9 @@ namespace EKG
                     }
                 }
 
-                t--;
+                
                 toscaling = toscale.ToList();
-            }
+            
 
             for (int i = 0; i < toscaling.Count; i++)
             {
@@ -195,13 +194,13 @@ namespace EKG
                 var speedy2 = Math.Abs(dateECG[coordinates[index2first]] - dateECG[coordinates[index2last]]);
                 if (speedy1 < speedy2)
                 {
-                    var tofill = directions[toscaling.ElementAt(i).Item1 - 1];
+                    tofill = directions[toscaling.ElementAt(i).Item1 - 1];
                     for (int k = toscaling.ElementAt(i).Item1; k < toscaling.ElementAt(i).Item2; k++)
                         directions[k] = tofill;
                 }
                 else
                 {
-                    var tofill = directions[toscaling.ElementAt(i).Item2 + 1];
+                   tofill = directions[toscaling.ElementAt(i).Item2 + 1];
                     for (int k = toscaling.ElementAt(i).Item1; k < toscaling.ElementAt(i).Item2; k++)
                         directions[k] = tofill;
                 }
@@ -244,6 +243,21 @@ namespace EKG
             }
             return mark;
            
+        }
+        public static int[] pointimportant(int[] dateECG)
+        {
+            var min=dateECG.Min();
+
+            var max=dateECG.Max();
+           // var mark1 = points(dateECG);
+            //var mark2 = MinMax(dateECG);
+            var mark3= new int[dateECG.Length];
+            for(int i=5; i<mark3.Length-5;i++){
+                    if(dateECG[i]<(int)(min+50))
+                        mark3[i]=1;
+
+                }
+            return mark3;
         }
     }
 }

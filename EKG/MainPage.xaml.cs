@@ -31,8 +31,10 @@ namespace EKG
         public MainPage()
         {
             this.InitializeComponent();
-            moove.IsEnabled = false;
+            enablefalse();
+            
         }
+        
         int[] ekgdata;
         int[] mark;
         
@@ -45,6 +47,7 @@ namespace EKG
             FOP.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
 
             FOP.FileTypeFilter.Add(".ascii");
+            FOP.FileTypeFilter.Add(".txt");
 
             StorageFile filepom = await FOP.PickSingleFileAsync();
 
@@ -58,15 +61,44 @@ namespace EKG
                     dane[dane.Length-1]="0";
                 ekgdata = dane.AsParallel().Select(x => int.Parse(x, NumberStyles.Integer)).ToArray();
                 //System.Threading.Tasks.Task.Delay(TimeSpan.FromMilliseconds(50));
-                ekgdata = ECGoperation.Smoothing(ekgdata);
-                mark=ECGoperation.points(ekgdata);
-                ploting(normalizedata(ekgdata),(int)plot.ActualWidth,mark);
+                mark = new int[ekgdata.Length];
+                plot.Children.Clear();
                 
-                moove.IsEnabled = true;
+               
+                ploting(normalizedata(ekgdata),(int)plot.ActualWidth,mark);
+
+                enabletrue();
                 moove.Value = 0;
                 
 
             }
+        }
+        private  void waitcursor(){
+             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 1);
+             
+
+        }
+        private void nowaitcursor()
+        {
+            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 1);
+            
+        }
+        private void enablefalse()
+        {
+            moove.IsEnabled = false;
+            speddslider.IsEnabled = false;
+            pley.IsEnabled = false;
+            pause.IsEnabled = false;
+            operations.IsEnabled = false;
+        }
+        private void enabletrue()
+        {
+            moove.IsEnabled = true;
+
+            speddslider.IsEnabled = true;
+            pley.IsEnabled = true;
+            
+            operations.IsEnabled = true;
         }
 
         private int[] normalizedata(int[] data)
@@ -87,7 +119,7 @@ namespace EKG
             myPolygon.Stroke = new SolidColorBrush(Colors.Black);
 
             //myPolygon.Opacity = 0.5;
-            myPolygon.StrokeThickness = 2;
+            myPolygon.StrokeThickness = 4;
             myPolygon.HorizontalAlignment = HorizontalAlignment.Left;
             myPolygon.VerticalAlignment = VerticalAlignment.Center;
             //************************************************************//
@@ -101,9 +133,7 @@ namespace EKG
                 {
                     draw(maska, i, j);
                     points.Add(new Point(j, plot.ActualHeight - ekgdata[i]));
-                    //draw(maska, j, i);
-
-                    //draw(maska, j,i );
+                    
                     
                 }
             
@@ -116,34 +146,57 @@ namespace EKG
         }
         private void draw(int[] maska ,int i, int j)
         {
-            if(maska[i]==1){
-
-                
-                Line myLine = new Line();
-                myLine.Stroke = new SolidColorBrush(Colors.Aqua);
-                myLine.StrokeThickness = 50;
-                myLine.X1 = j ;
-                myLine.X2 = j ;
-                myLine.Y1 = plot.ActualHeight - ekgdata[i];
-                myLine.Y2 = plot.ActualHeight - ekgdata[i] + 1;
-
-                plot.Children.Add(myLine);
-            }
-            else if (maska[i] == 0)
+            try
             {
+                if (maska[i] == 1)
+                {
 
-                //Line myLine = new Line();
-                //myLine.Stroke = new SolidColorBrush(Colors.Brown);
-                //myLine.StrokeThickness = 50;
-                //myLine.X1 = j;//j + 1;
-                //myLine.X2 = j;// j + 1;
-                //myLine.Y1 = plot.ActualHeight - ekgdata[i];
-                //myLine.Y2 = plot.ActualHeight - ekgdata[i] + 1;
+                    //Rectangle rect = new Rectangle();
+                    //rect.Width = 1;
+                    //rect.Height = 10;
+                    //rect.Stroke = new SolidColorBrush(Colors.LightPink);
+                    //rect.Fill = new SolidColorBrush(Colors.LightPink);
 
-                //plot.Children.Add(myLine);
+                    //Canvas.SetLeft(rect, j);
+                    //Canvas.SetTop(rect, plot.ActualHeight - ekgdata[i]);
+                    Line myLine = new Line();
+                    myLine.Stroke = new SolidColorBrush(Colors.Aqua);
+                    myLine.StrokeThickness = 1;
+                    myLine.X1 = j;
+                    myLine.X2 = j;
+                    myLine.Y1 = plot.ActualHeight - ekgdata[i];
+                    myLine.Y2 = plot.ActualHeight - ekgdata[i] + 10;
 
+                    plot.Children.Add(myLine);
+                }
+                //else if (maska[i] == 0)
+                //{
+                //    //Rectangle rect = new Rectangle();
+                //    //rect.Width = 10;
+                //    //rect.Height = 10;
+                //    //rect.Stroke = new SolidColorBrush(Colors.MediumSeaGreen);
+                //    //rect.Fill = new SolidColorBrush(Colors.MediumSeaGreen);
+                //    //rect.StrokeThickness = 2;
+                //    //Canvas.SetLeft(rect, j);
+                //    //Canvas.SetTop(rect, plot.ActualHeight - ekgdata[i]);
+                //    //Line myLine = new Line();
+                //    //myLine.Stroke = new SolidColorBrush(Colors.Brown);
+                //    //myLine.StrokeThickness = 50;
+                //    //myLine.X1 = j;//j + 1;
+                //    //myLine.X2 = j;// j + 1;
+                //    //myLine.Y1 = plot.ActualHeight - ekgdata[i];
+                //    //myLine.Y2 = plot.ActualHeight - ekgdata[i] + 1;
+
+                //    //plot.Children.Add(myLine);
+                //    //plot.Children.Add(rect);
+
+                //}
             }
-
+            catch (Exception t)
+            {
+                
+            }
+           
 
         }
         
@@ -164,18 +217,22 @@ namespace EKG
         }
 
 
-        private async void speedy_show(int n)
+        private async System.Threading.Tasks.Task  speedy_show(int n)
         {
-            
-            for (int i = 0; i < moove.Maximum; i+=10)
+
+            int poz = (int)(moove.Value);
+            int pozycja = 0;
+            for (int i = poz; i < moove.Maximum; i+=1)
             {
-                
-                int pozycja = (int)(i * ekgdata.Length / 10000);
+
+                n = (int)speddslider.Value;
+                pozycja = (int)(i * ekgdata.Length / 10000);
                 if (pozycja < (int)plot.ActualWidth) pozycja = (int)plot.ActualWidth;
                 plot.Children.Clear();
-                if (shouldStop == true)
+                if (shouldStop == true || i == moove.Maximum-1)
                 {
                     ploting(ekgdata, pozycja, mark);
+                    shouldStop = false;
                     break;
                 }
                 ploting(ekgdata, pozycja, mark);
@@ -186,12 +243,20 @@ namespace EKG
         }
         private volatile bool shouldStop = false;
         
-        private void pley_Click(object sender, RoutedEventArgs e)
+        private async  void pley_Click(object sender, RoutedEventArgs e)
         {
+            
+            moove.IsEnabled = false;
+            pley.IsEnabled = false;
+            pause.IsEnabled = true;
             int n = (int)(10 * speddslider.Value);
 
-            speedy_show(n);
-            
+            await speedy_show(n);
+
+
+            pley.IsEnabled = true;
+            moove.IsEnabled = true;
+            moove.Value = 0;
             
         }
 
@@ -199,44 +264,77 @@ namespace EKG
         {
             
             shouldStop = true;
+            pause.IsEnabled = false;
         }
 
-        private void operations_Click(object sender, RoutedEventArgs e)
+        private void beforaction()
         {
-           
+            waitcursor();
+            apptop.IsEnabled = false;
         }
-
-        private void close_Click(object sender, RoutedEventArgs e)
+        private void afteraction()
         {
+            var pozycja = (int)(moove.Value * ekgdata.Length / 10000);
+            if (pozycja < (int)plot.ActualWidth) pozycja = (int)plot.ActualWidth;
+            
+            plot.Children.Clear();
+            ploting(ekgdata, (int)pozycja, mark);
+
             operatiofly1.Hide();
+            app.IsOpen = false;
+            apptop.IsEnabled = true;
+            nowaitcursor();
         }
 
         private void smoothbutton_Click(object sender, RoutedEventArgs e)
         {
-            operatiofly1.Hide();
-            operatiofly.Hide();
-            app.IsOpen = false;
+            beforaction();
+            mark = new int[ekgdata.Length];
+            ekgdata = ECGoperation.Smoothing(ekgdata);
+            afteraction();
         }
 
         private void direction_Click(object sender, RoutedEventArgs e)
         {
-            operatiofly1.Hide();
+            beforaction();
+            mark = ECGoperation.Direction(ekgdata);
+            afteraction();
+        
         }
 
         private void small_interwals_Click(object sender, RoutedEventArgs e)
         {
-            operatiofly1.Hide();
+            beforaction();
+            mark = ECGoperation.todraw(ekgdata);
+            afteraction();
         }
 
         private void after_merge_Click(object sender, RoutedEventArgs e)
         {
-            operatiofly1.Hide();
-            app.IsOpen = false;
+            beforaction();
+            mark = ECGoperation.scalanie(ekgdata);
+            afteraction();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            operatiofly1.Hide();
+            beforaction();
+            mark = ECGoperation.points(ekgdata);
+            afteraction();
+        }
+
+        private void maxminbutton_Click(object sender, RoutedEventArgs e)
+        {
+            beforaction();
+            mark = ECGoperation.MinMax(ekgdata);
+            afteraction();
+        }
+
+        private void ekstrapionts_Click(object sender, RoutedEventArgs e)
+        {
+            beforaction();
+            mark = ECGoperation.pointimportant(ekgdata);
+            afteraction();
         }
 
        
