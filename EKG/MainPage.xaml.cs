@@ -161,7 +161,7 @@ namespace EKG
                     //Canvas.SetTop(rect, plot.ActualHeight - ekgdata[i]);
                     Line myLine = new Line();
                     myLine.Stroke = new SolidColorBrush(Colors.Aqua);
-                    myLine.StrokeThickness = 1;
+                    myLine.StrokeThickness = 5;
                     myLine.X1 = j;
                     myLine.X2 = j;
                     myLine.Y1 = plot.ActualHeight - ekgdata[i];

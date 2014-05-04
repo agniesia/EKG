@@ -89,6 +89,14 @@ namespace EKG
                 
                 t--;
             }
+            tempecg = dateECG.ToList();
+            for (int i = 0; i < SizeMask; i++)
+                tempecg.RemoveAt(0);
+            tempecg.Reverse();
+            for (int i = 0; i < SizeMask; i++)
+                tempecg.RemoveAt(0);
+            tempecg.Reverse();
+            dateECG = tempecg.ToArray();
             return dateECG;
         }
         public static List<Tuple<int, int>> MarkToSacaling(int[] dateECG, int[] direction)
@@ -98,7 +106,7 @@ namespace EKG
             // zmiennosc obszaru
             int ECGdiference =(int)(0.01 * (dateECG.Max() - dateECG.Min()));
             // dlugosc obszaru
-            int min_long=(int)(15);
+            int min_long=(int)(10);
 
             //dodaje odscinki o wsp poczz i kon w jednym tuplu . mozliwe graniczne wsp 0-x i y-kon;
             for (int i = 0; i < cordinates.Count-1; i++)
@@ -231,7 +239,8 @@ namespace EKG
                     suma += Math.Abs(dateECG[k]-dateECG[k+1]);
                     t++;
                 }
-                sr = 0.3*(suma / t);
+                if(t>0)
+                    sr = 0.3*(suma / t);
 
                 for (int k = interval.ElementAt(i).Item1+1; k < interval.ElementAt(i).Item2-1; k++)
                 {
@@ -246,6 +255,17 @@ namespace EKG
         }
         public static int[] pointimportant(int[] dateECG)
         {
+            var tempecg = dateECG.ToList();
+            
+            for (int i = 0; i < 10; i++)
+                tempecg.RemoveAt(0);
+            tempecg.Reverse();
+            for (int i = 0; i < 10; i++)
+                tempecg.RemoveAt(0);
+            tempecg.Reverse();
+            dateECG = tempecg.ToArray();
+            
+
             var min=dateECG.Min();
 
             var max=dateECG.Max();
@@ -255,6 +275,8 @@ namespace EKG
             for(int i=5; i<mark3.Length-5;i++){
                     if(dateECG[i]<(int)(min+50))
                         mark3[i]=1;
+                    else if(dateECG[i]>(max-50))
+                        mark3[i] = 1;
 
                 }
             return mark3;

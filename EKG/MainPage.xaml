@@ -5,7 +5,7 @@
     xmlns:local="using:EKG"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d" IsTabStop="True" AllowDrop="True">
 	<Page.Resources>
 		<Flyout x:Name="operatiofly1" x:Key="operacje" Placement="Full">
 			<Grid>
@@ -29,7 +29,7 @@
 		</Flyout>
 	</Page.Resources>
 	<Page.TopAppBar>
-		<AppBar x:Name="app">
+		<AppBar x:Name="app" IsSticky="True" AllowDrop="True">
 			<Grid x:Name="appgrig">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition/>
@@ -80,7 +80,7 @@
     				<RowDefinition/>
     				<RowDefinition/>
     			</Grid.RowDefinitions>
-    			<TextBlock x:Name="speedname" HorizontalAlignment="Center" Margin="0" TextWrapping="Wrap" Text="Speed" VerticalAlignment="Center" FontSize="26.667" Foreground="Black" FontWeight="Bold"/>
+    			<TextBlock x:Name="speedname" HorizontalAlignment="Center" Margin="0" TextWrapping="Wrap" Text="Speed" VerticalAlignment="Center" FontSize="26.667" Foreground="Black" FontWeight="Bold" SelectionHighlightColor="#FFDEDCE6"/>
     			<Slider x:Name="speddslider" Margin="0" Grid.Row="1" Background="Black" BorderBrush="#FFFE0001" Foreground="#FF850001" Minimum="20" Maximum="150" Value="70" IsDirectionReversed="True"/>
     		</Grid>
     	</Grid>
